@@ -17,6 +17,10 @@ all:
 	$(AS) $(AS_FLAGS) kernel.i -o kernel.o
 	$(LD) $(LDFLAGS) kernel.o -o kernel.elf
 
+objdump:
+	$(OBJDUMP) -D kernel.elf
+
+
 clean:
 	rm *.o
 	rm *.i
