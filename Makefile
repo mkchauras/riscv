@@ -1,35 +1,25 @@
-# Define the RISC-V tools
-RISCV_PREFIX = riscv64-linux-gnu-
-CC = $(RISCV_PREFIX)gcc
-AS = $(RISCV_PREFIX)as
-LD = $(RISCV_PREFIX)ld
-OBJCOPY = $(RISCV_PREFIX)objcopy
-
-# Source files
-SRC = bios.S
-
-# Output files
-OBJ = bios.o
-ELF = bios.elf
-BIN = bios.bin
+PREFIX=riscv64-linux-gnu-
+CPP = $(PREFIX)cpp
+CC = $(PREFIX)gcc
+AS = $(PREFIX)as
+LD = $(PREFIX)ld
+OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
 
 # Compiler and linker flags
-CFLAGS = -Wall -nostdlib -nostartfiles -march=rv64imac -mabi=lp64
+CPP_FLAGS = 
+AS_FLAGS = -march=rv64g_zbb -g
+CFLAGS = -Wall -nostdlib -nostartfiles -g
 LDFLAGS = -T linker.ld
 
-all: $(BIN)
-
-$(OBJ): $(SRC)
-	$(AS) -g -o $@ $<
-
-$(ELF): $(OBJ)
-	$(LD) $(LDFLAGS) -o $@ $^
-
-$(BIN): $(ELF)
-	$(OBJCOPY) -O binary $< $@
+all:
+	$(CPP) $(CPP_FLAGS) start.S -o kernel.i
+	$(AS) $(AS_FLAGS) kernel.i -o kernel.o
+	$(LD) $(LDFLAGS) kernel.o -o kernel.elf
 
 clean:
-	rm -f $(OBJ) $(ELF) $(BIN)
+	rm *.o
+	rm *.i
+	rm *.elf
 
-.PHONY: all clean
 
