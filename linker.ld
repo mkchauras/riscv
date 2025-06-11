@@ -6,12 +6,22 @@ SECTIONS
 {
     /* Define start address */
     . = 0x80000000;
-
+    
     /* Entry point / startup code */
-    .text.start : {
+    .text.start : ALIGN(4) {
         *(.text._start)
     }
 
+    .text.mtrap_vec : {
+	____mtrap_location____ = .;
+	*(.text._mtrap_vec)
+    }
+   
+    .text.strap_vec : {
+	____strap_location____ = .;
+	*(.text._strap_vec)
+    }
+   
     /* General text/code section */
     .text : ALIGN(4) {
         *(.text)
@@ -38,9 +48,9 @@ SECTIONS
 
     /* Stack at the end */
     . = ALIGN(8);
-    __stack_start = .;
+    ____stack_end____ = .;
     . = . + STACK_SIZE;
     . = ALIGN(8);
-    __stack_end = .;
+    ____stack_start____ = .;
 }
 
