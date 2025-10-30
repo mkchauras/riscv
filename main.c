@@ -3,5 +3,5 @@
 int start_kernel()
 {
 	printk("Hello World\n");
-	while(1);
+	return 0;
 }

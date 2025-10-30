@@ -52,7 +52,6 @@ static void print_int(long val) {
     }
 }
 
-// The main printf implementation
 void printk(const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
@@ -60,7 +59,61 @@ void printk(const char *fmt, ...) {
     while (*fmt) {
         if (*fmt == '%') {
             fmt++;
+            int long_flag = 0;
+            int long_long_flag = 0;
+
+            // Handle length modifiers: l / ll
+            if (*fmt == 'l') {
+                fmt++;
+                if (*fmt == 'l') {
+                    long_long_flag = 1;
+                    fmt++;
+                } else {
+                    long_flag = 1;
+                }
+            }
+
             switch (*fmt) {
+                case 'd':
+                case 'i': {
+                    if (long_long_flag) {
+                        long long val = va_arg(ap, long long);
+                        print_int(val);
+                    } else if (long_flag) {
+                        long val = va_arg(ap, long);
+                        print_int(val);
+                    } else {
+                        int val = va_arg(ap, int);
+                        print_int(val);
+                    }
+                    break;
+                }
+                case 'u': {
+                    if (long_long_flag) {
+                        unsigned long long val = va_arg(ap, unsigned long long);
+                        print_uint(val, 10);
+                    } else if (long_flag) {
+                        unsigned long val = va_arg(ap, unsigned long);
+                        print_uint(val, 10);
+                    } else {
+                        unsigned int val = va_arg(ap, unsigned int);
+                        print_uint(val, 10);
+                    }
+                    break;
+                }
+                case 'x': {
+                    if (long_long_flag) {
+                        unsigned long long val = va_arg(ap, unsigned long long);
+                        print_uint(val, 16);
+                    } else if (long_flag) {
+                        unsigned long val = va_arg(ap, unsigned long);
+                        print_uint(val, 16);
+                    } else {
+                        unsigned int val = va_arg(ap, unsigned int);
+                        print_uint(val, 16);
+                    }
+                    break;
+                }
                 case 'c': {
                     char c = (char)va_arg(ap, int);
                     put_char(c);
@@ -72,22 +125,6 @@ void printk(const char *fmt, ...) {
                         print_str(s);
                     else
                         print_str("(null)");
-                    break;
-                }
-                case 'd':
-                case 'i': {
-                    int d = va_arg(ap, int);
-                    print_int(d);
-                    break;
-                }
-                case 'u': {
-                    unsigned int u = va_arg(ap, unsigned int);
-                    print_uint(u, 10);
-                    break;
-                }
-                case 'x': {
-                    unsigned int x = va_arg(ap, unsigned int);
-                    print_uint(x, 16);
                     break;
                 }
                 case 'p': {

@@ -5,7 +5,11 @@
 mtrap_vector_table:
 	csrr a0, mcause
 	csrr a1, mtval 
+	csrr a2, mepc
 	jal trap_handler
+	csrr t0, mepc
+	addi t0, t0, 0x04
+	csrw mepc, t0
 	mret
 
 .section .text._strap_vec
